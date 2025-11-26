@@ -51,7 +51,7 @@ export const apiPreview = new Elysia({ prefix: "/api" })
         // Verify job belongs to user
         const job = await db
           .query("SELECT * FROM jobs WHERE user_id = ? AND id = ?")
-          .get(user.id, jobId);
+          .get(DEFAULT_USER_ID, jobId);
 
         if (!job) {
           set.status = 404;
@@ -74,7 +74,7 @@ export const apiPreview = new Elysia({ prefix: "/api" })
           };
         }
 
-        const filePath = `${outputDir}${user.id}/${jobId}/${sanitizedFileName}`;
+        const filePath = `${outputDir}${DEFAULT_USER_ID}/${jobId}/${sanitizedFileName}`;
 
         // Check if file exists
         const file = Bun.file(filePath);
@@ -136,7 +136,7 @@ export const apiPreview = new Elysia({ prefix: "/api" })
         // Verify job belongs to user
         const job = await db
           .query("SELECT * FROM jobs WHERE user_id = ? AND id = ?")
-          .get(user.id, jobId);
+          .get(DEFAULT_USER_ID, jobId);
 
         if (!job) {
           set.status = 404;

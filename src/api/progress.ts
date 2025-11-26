@@ -33,8 +33,9 @@ export const apiProgress = new Elysia({ prefix: "/api" })
           .all(jobId);
 
         const totalFiles = job.num_files;
-        const completedFiles = files.filter((f) => f.status === "completed").length;
-        const failedFiles = files.filter((f) => f.status === "failed").length;
+        // Support both "completed" and "Done" status values
+        const completedFiles = files.filter((f) => f.status === "completed" || f.status === "Done").length;
+        const failedFiles = files.filter((f) => f.status === "failed" || f.status === "Error").length;
         const processingFiles = files.filter((f) => f.status === "processing").length;
         const pendingFiles = totalFiles - completedFiles - failedFiles - processingFiles;
 

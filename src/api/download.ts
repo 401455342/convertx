@@ -1,6 +1,7 @@
 import { Elysia, t } from "elysia";
 import sanitize from "sanitize-filename";
 import path from "node:path";
+import fs from "node:fs";
 import * as tar from "tar";
 import { outputDir } from "..";
 import db from "../db/db";
@@ -83,16 +84,24 @@ export const apiDownload = new Elysia({ prefix: "/api" })
         const outputPath = `${outputDir}${DEFAULT_USER_ID}/${jobId}`;
         const outputTar = path.join(outputPath, `converted_files_${jobId}.tar`);
 
-        // Create tar archive
+        // Get list of files in the directory (excluding tar files)
+        const files = fs.readdirSync(outputPath).filter((f: string) => !f.endsWith('.tar'));
+
+        if (files.length === 0) {
+          set.status = 404;
+          return {
+            success: false,
+            error: "No files to download",
+          };
+        }
+
+        // Create tar archive with actual files
         await tar.create(
           {
             file: outputTar,
             cwd: outputPath,
-            filter: (path) => {
-              return !path.match(".*\\.tar");
-            },
           },
-          ["."]
+          files
         );
 
         const tarFile = Bun.file(outputTar);

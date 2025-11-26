@@ -66,6 +66,12 @@ export const apiConvert = new Elysia({ prefix: "/api" })
           jobId
         );
 
+        // Create a simple cookie-like object for handleConvert
+        const jobIdCookie = {
+          value: String(jobId),
+          name: 'jobId',
+        } as any;
+
         // Start conversion process in background
         handleConvert(
           fileNames,
@@ -73,7 +79,7 @@ export const apiConvert = new Elysia({ prefix: "/api" })
           userOutputDir,
           convertTo,
           converterName,
-          { value: jobId }
+          jobIdCookie
         )
           .then(() => {
             db.query("UPDATE jobs SET status = 'completed' WHERE id = ?1").run(jobId);
